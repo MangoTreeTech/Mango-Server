@@ -1,0 +1,28 @@
+spring:
+  profiles:
+    active:
+  application:
+    name: mango #
+  datasource:
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      #url: jdbc:mysql://120.55.189.211:3306/hide_and_seek?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+      url: jdbc:mysql://localhost:3306/mango?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+      username: root
+      password: 123456
+
+# ???? WEB ????
+server:
+  port: 8080
+
+# ?? mybatis-plus ????
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    #use-generated-keys: true
+  global-config:
+    db-config:
+      id-type: auto
+
+
