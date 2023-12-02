@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -54,6 +55,9 @@ public class LikeTableController {
         likeTable.setUserId(userId);
         likeTable.setLikeId(likeId);
         likeTable.setIsBlog(1);
+        //获取时间并存入
+        LocalDateTime dateTime = LocalDateTime.now();
+        likeTable.setCreateTime(dateTime);
         likeTableService.save(likeTable);
         //更新推文表中的相应数据
         blogService.addBlogLikeAmount(likeId);
@@ -82,6 +86,9 @@ public class LikeTableController {
         likeTable.setUserId(userId);
         likeTable.setLikeId(likeId);
         likeTable.setIsBlog(0);
+        //获取时间并存入
+        LocalDateTime dateTime = LocalDateTime.now();
+        likeTable.setCreateTime(dateTime);
         likeTableService.save(likeTable);
         //更新推文表中的相应数据
         blogCommentService.addBlogCommentLikeAmount(likeId);

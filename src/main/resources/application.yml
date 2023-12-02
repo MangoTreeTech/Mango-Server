@@ -6,14 +6,17 @@ spring:
   datasource:
     druid:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      #url: jdbc:mysql://120.55.189.211:3306/hide_and_seek?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
-      url: jdbc:mysql://localhost:3306/mango?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
-      username: root
-      password: 123456
+      url: jdbc:mysql://101.32.36.52:3306/mango?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+      #url: jdbc:mysql://localhost:3306/mango?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+      #username: root
+      #password: 123456
+      username: mango
+      password: 12345678
 
 # ???? WEB ????
 server:
-  port: 8080
+  #port: 8080
+  port: 8675
 
 # ?? mybatis-plus ????
 mybatis-plus:

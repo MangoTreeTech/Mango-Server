@@ -47,7 +47,7 @@ public class FriendController {
         friend.setFriendId(friendId);
         //查询是否出现重复关注
         if (friendService.existFollow(userId, friendId)) {
-            return R.success("不可重复关注");
+            return R.error("不可重复关注");
         }
         friendService.save(friend);
         return R.success("关注成功");

@@ -214,6 +214,6 @@ public class BlogController {
         }
         blogService.removeById(id);
         likeTableService.removeByLikeId(id, 1);
-        return R.success("删除成功");
+        return R.success("删除推文成功");
     }
 }
