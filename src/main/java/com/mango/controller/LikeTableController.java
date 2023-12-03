@@ -129,10 +129,27 @@ public class LikeTableController {
         return R.success("取消点赞成功");
     }
 
+    /**
+     * 获取用户点赞过的推文和评论，需求参数：userId
+     * @param userId
+     * @return
+     */
     @GetMapping("/selectlike")
     public R<? extends List> selectLike(Integer userId){
         log.info(String.valueOf(userId));
         List<LikeTable> list = likeTableService.selectLikeByUserId(userId);
+        return R.success(list);
+    }
+
+    /**
+     * 获取用户点赞过的推文，用于大数据推送，需求参数：userId
+     * @param userId
+     * @return
+     */
+    @GetMapping("/selectlikecomments")
+    public R<? extends List> selectLikeComments(Integer userId){
+        log.info(String.valueOf(userId));
+        List<LikeTable> list = likeTableService.selectLikeCommentsByUserId(userId);
         return R.success(list);
     }
 }

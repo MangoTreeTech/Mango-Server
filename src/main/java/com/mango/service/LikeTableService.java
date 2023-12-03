@@ -12,5 +12,7 @@ public interface LikeTableService extends IService<LikeTable> {
 
     List<LikeTable> selectLikeByUserId(Integer userId);
 
+    List<LikeTable> selectLikeCommentsByUserId(Integer userId);
+
     void removeByLikeId(Integer likeId, Integer i);
 }

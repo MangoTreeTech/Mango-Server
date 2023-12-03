@@ -1,11 +1,12 @@
 package com.mango.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.mango.common.R;
 import com.mango.config.Constant;
+import com.mango.entity.Blog;
+import com.mango.entity.LikeTable;
 import com.mango.entity.User;
-import com.mango.mapper.UserMapper;
+import com.mango.service.BlogService;
+import com.mango.service.LikeTableService;
 import com.mango.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -14,14 +15,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Base64;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping("/user")
@@ -30,6 +30,12 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private LikeTableService likeTableService;
+
+    @Autowired
+    private BlogService blogService;
 
     @Autowired
     private Constant constant;
@@ -156,5 +162,69 @@ public class UserController {
         userService.uploadLocationById(id, posX, posY);
 
         return R.success("成功更新位置");
+    }
+    //TODO 大数据推送功能
+    @PostMapping("/pytest")
+    public R pyTest(@RequestBody Map map, HttpSession session) throws IOException, InterruptedException {
+        log.info(map.toString());
+
+        //获取用户id
+        int id = Integer.parseInt(map.get("id").toString());
+        //获取用户点赞的推文
+        List<LikeTable> list = likeTableService.selectLikeCommentsByUserId(id);
+        List<List> likeBlogContentList =new ArrayList<>();
+        for (LikeTable likeTable : list) {
+            List<String> DescriptionAndFileNameList = new ArrayList<>();
+            //得到一个推文，一个推文可能有多个图片，在这里把一个推文的多个图片拆开来，分别存入列表
+            Blog blog = blogService.getById(likeTable.getLikeId());
+            //将文本传入列表
+            DescriptionAndFileNameList.add(blog.getDescription());
+
+            // 去除字符串两端的方括号并按照逗号和空格分割成字符串数组
+            String[] fileNames = blog.getImage().replaceAll("[\\[\\]]", "").split("\\s*,\\s*");
+
+            for (String fileName : fileNames) {
+                String filePath = constant.dir + "/" + fileName; // 获取文件路径
+                DescriptionAndFileNameList.add(filePath);
+            }
+            likeBlogContentList.add(DescriptionAndFileNameList);
+        }
+        //return R.success(likeBlogContentList);
+
+        // 构建Python命令及参数列表
+        String pythonScriptPath = "path/to/your/python_script.py";//TODO 正确的py脚本路径名
+        String[] command = new String[]{"python", pythonScriptPath};
+        for (List fileName : likeBlogContentList) {
+            command = Arrays.copyOf(command, command.length + 1);
+            command[command.length - 1] = fileName.toString();
+        }
+
+        // 创建ProcessBuilder对象
+        ProcessBuilder processBuilder = new ProcessBuilder(command);
+
+        // 启动进程
+        Process process = processBuilder.start();
+
+        // 获取Python脚本的输出
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            System.out.println(line); // 输出Python脚本的执行结果
+        }
+        //TODO 预期执行结果为图片名列表
+        /**
+         * 这样就会涉及到一个问题，如何根据图片名得知图片属于哪个推文，从而实现精准推送
+         * 我现在想到一个办法，将文件名前方添加推文Id，例如原本是1701430469780.png，之后改成2_1701430469780.png
+         * 这样会损失一部分安全性，但是能够实现功能。如果这样做，python脚本的执行结果返回文件名列表，我读取文件名列表得知这个id用户可以被推送哪些推文
+         * 可以另外建一个数据库用来存用户可以被推送的队列，实现起来比较简单，当用户想看推文时，从队列里取出10个推文id，然后获取推文内容推送给用户（举例）
+         * 那么我期望python脚本接收图片名，对图片进行处理等操作，得到模型，可以根据实际情况进行优化，最终输出文件名列表，被我读取
+         * 还有一个问题，如何实现这个方法被调用，客户端定时轮询？频率可以一天一次或者动态调整，如果要后端实现主动调用的话我这边可以添加新的框架来实现
+         */
+
+        // 等待Python脚本执行完毕并获取返回值
+        int exitCode = process.waitFor();
+        return R.success("Python脚本执行完毕，退出码：" + exitCode);
+
+
     }
 }

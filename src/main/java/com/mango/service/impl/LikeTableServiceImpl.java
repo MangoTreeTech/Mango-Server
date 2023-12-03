@@ -37,6 +37,13 @@ public class LikeTableServiceImpl extends ServiceImpl<LikeTableMapper, LikeTable
         return likeTableService.list(queryWrapper);
     }
 
+    @Override
+    public List<LikeTable> selectLikeCommentsByUserId(Integer userId) {
+        QueryWrapper<LikeTable> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId).eq("is_blog", 1);
+        return likeTableService.list(queryWrapper);
+    }
+
     //删除评论或推文时，删除相关数据
     @Override
     public void removeByLikeId(Integer likeId, Integer i) {
