@@ -30,4 +30,10 @@ public class User implements Serializable {
     //可见性，为1时可见，为0时不可见
     private Integer isVisible;
 
+    //用户邮箱
+    private String email;
+
+    //用户手机号
+    private String phone;
+
 }

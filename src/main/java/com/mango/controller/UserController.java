@@ -77,6 +77,12 @@ public class UserController {
         user.setPosX(0);
         user.setPosY(0);
         user.setIsVisible(1);
+        if (map.get("email") != null) {
+            user.setEmail(map.get("email").toString());
+        }
+        if (map.get("phone") != null) {
+            user.setPhone(map.get("phone").toString());
+        }
         userService.save(user);
 
         return R.success(String.valueOf(id));
