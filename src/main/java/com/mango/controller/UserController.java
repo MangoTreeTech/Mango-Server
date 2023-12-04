@@ -186,6 +186,7 @@ public class UserController {
         //获取用户可见性
         int isVisible = Integer.parseInt(map.get("isVisible").toString());
 
+
         userService.changeVisibilityById(id, isVisible);
         return R.success("修改可见性成功");
     }
