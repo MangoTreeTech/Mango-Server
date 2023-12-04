@@ -26,4 +26,8 @@ public class User implements Serializable {
     private double posX;
     //纬度
     private double posY;
+
+    //可见性，为1时可见，为0时不可见
+    private Integer isVisible;
+
 }

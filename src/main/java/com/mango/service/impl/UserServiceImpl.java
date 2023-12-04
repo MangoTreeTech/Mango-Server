@@ -60,5 +60,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         userService.update(null, updateWrapper);
     }
 
+    @Override
+    public void changeVisibilityById(Integer id, Integer isVisible) {
+        UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("id",id).set("is_visible", isVisible);
+        userService.update(null, updateWrapper);
+    }
+
 
 }

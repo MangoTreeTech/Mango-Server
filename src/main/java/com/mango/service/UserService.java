@@ -39,4 +39,6 @@ public interface UserService extends IService<User> {
      * @param posY
      */
     void uploadLocationById(Integer id, double posX, double posY);
+
+    void changeVisibilityById(Integer id, Integer isVisible);
 }

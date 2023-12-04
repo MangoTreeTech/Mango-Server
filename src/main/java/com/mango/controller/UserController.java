@@ -76,6 +76,7 @@ public class UserController {
         user.setIcon("1.jpg");
         user.setPosX(0);
         user.setPosY(0);
+        user.setIsVisible(1);
         userService.save(user);
 
         return R.success(String.valueOf(id));
@@ -149,6 +150,12 @@ public class UserController {
         }
     }
 
+    /**
+     * 上传自己位置，需求参数：用户id，用户位置posX，posY
+     * @param map
+     * @param session
+     * @return
+     */
     @PostMapping("/uploadlocation")
     public R<String> uploadLocation(@RequestBody Map map, HttpSession session) {
         log.info(map.toString());
@@ -163,6 +170,53 @@ public class UserController {
 
         return R.success("成功更新位置");
     }
+
+    /**
+     * 实现修改可见性功能，需求参数：用户id和修改后的可见性（0不可见，1可见）
+     * @param map
+     * @param session
+     * @return
+     */
+    @PostMapping("/changevisibility")
+    public R<String> changeVisibility(@RequestBody Map map, HttpSession session) {
+        log.info(map.toString());
+
+        //获取用户id
+        int id = Integer.parseInt(map.get("id").toString());
+        //获取用户可见性
+        int isVisible = Integer.parseInt(map.get("isVisible").toString());
+
+        userService.changeVisibilityById(id, isVisible);
+        return R.success("修改可见性成功");
+    }
+
+    /**
+     * 实现查找某位用户的位置，会返回这个用户除了密码外的所有东西，需求参数：被查找的用户的id
+     * @param id
+     * @return
+     */
+    @GetMapping("/findauserlocation")
+    public R<User> findAUserLocation(Integer id) throws IOException {
+        log.info(String.valueOf(id));
+
+        User user = userService.getById(id);
+        if(user.getIsVisible()==0){
+            return R.error("该用户不可见");
+        }
+        user.setPassword("0");
+        //处理头像
+        String filePath = constant.dir + "/" + user.getIcon(); // 获取文件路径
+        // 处理文件读取异常，比如记录日志或者跳过该文件的处理
+        // 读取文件内容并添加到列表中
+        byte[] fileContent = Files.readAllBytes(Path.of(filePath));
+        // 使用Base64编码转换为字符串
+        String encodedString = Base64.getEncoder().encodeToString(fileContent);
+
+        user.setIcon(encodedString);
+        return R.success(user);
+    }
+
+
     //TODO 大数据推送功能
     @PostMapping("/pytest")
     public R pyTest(@RequestBody Map map, HttpSession session) throws IOException, InterruptedException {
