@@ -30,7 +30,7 @@ public class Blog implements Serializable {
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
 
-    //是否被锁上，1为锁上，0为没有锁上
+    //是否被锁上，1为上锁，0为没有上锁
     private Integer isLocked;
 
     //点赞数量

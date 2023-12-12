@@ -190,7 +190,7 @@ public class BlogController {
 
     //TODO 删除推文测试
     /**
-     * 删除推文，需求参数：id
+     * 实现删除推文，需求参数：id
      *
      * @param map
      * @param session
@@ -215,5 +215,28 @@ public class BlogController {
         blogService.removeById(id);
         likeTableService.removeByLikeId(id, 1);
         return R.success("删除推文成功");
+    }
+
+    //TODO 写了上锁和解锁接口，但是没有在其他方法中对上锁做出判断，后续实现
+    /**
+     * 修改推文可见性，需求参数：推文id和是否上锁isLocked，1为上锁，0为没有上锁
+     * @param map
+     * @param session
+     * @return
+     */
+    @PostMapping("/updatebloglock")
+    public R<String> updateBlogLock(@RequestBody Map map, HttpSession session){
+        log.info(map.toString());
+
+        int isLocked = Integer.parseInt(map.get("isLocked").toString());
+        int id = Integer.parseInt(map.get("id").toString());
+
+        Blog blog = blogService.getById(id);
+        if(isLocked!=0 && isLocked!=1){
+            return R.error("传入参数错误，修改可见性失败");
+        }
+        blog.setIsLocked(isLocked);
+        blogService.updateById(blog);
+        return R.success("修改可见性成功");
     }
 }
