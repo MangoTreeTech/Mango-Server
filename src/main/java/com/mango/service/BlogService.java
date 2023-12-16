@@ -2,8 +2,6 @@ package com.mango.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.mango.entity.Blog;
-import com.mango.entity.Friend;
-import com.mango.entity.User;
 
 import java.util.List;
 
@@ -12,5 +10,5 @@ public interface BlogService extends IService<Blog> {
 
     void addBlogLikeAmount(Integer id);
 
-    void subBlogLikeAmount(Integer id);
+    boolean subBlogLikeAmount(Integer id);
 }

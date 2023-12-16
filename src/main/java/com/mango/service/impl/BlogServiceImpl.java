@@ -4,12 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mango.entity.Blog;
-import com.mango.entity.Friend;
-import com.mango.entity.User;
 import com.mango.mapper.BlogMapper;
-import com.mango.mapper.FriendMapper;
 import com.mango.service.BlogService;
-import com.mango.service.FriendService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,10 +34,11 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
     }
 
     @Override
-    public void subBlogLikeAmount(Integer id) {
+    public boolean subBlogLikeAmount(Integer id) {
         Blog blog = blogService.getById(id);
         UpdateWrapper<Blog> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("id", id).set("like_amount", blog.getLikeAmount() - 1);
         blogService.update(null, updateWrapper);
+        return false;
     }
 }

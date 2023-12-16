@@ -4,7 +4,6 @@ import com.mango.common.R;
 import com.mango.config.Constant;
 import com.mango.entity.Blog;
 import com.mango.service.BlogService;
-import com.mango.service.FriendService;
 import com.mango.service.LikeTableService;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -107,6 +106,9 @@ public class BlogController {
 
         //根据userId查询这个用户写出的推文
         List<Blog> blogList = blogService.selectBlogs(userId);
+        if (blogList.isEmpty()) {
+            return R.error("暂无推文");
+        }
         //替换其中的image
         for (Blog blog : blogList) {
             // 去除字符串两端的方括号并按照逗号和空格分割成字符串数组
@@ -133,6 +135,7 @@ public class BlogController {
 
     /**
      * 实现更新推文功能，需求参数写在函数头了
+     *
      * @param files
      * @param userId
      * @param id
@@ -184,11 +187,14 @@ public class BlogController {
         //获取时间并存入
         LocalDateTime dateTime = LocalDateTime.now();
         blog.setUpdateTime(dateTime);
-        blogService.updateById(blog);
+        if (!blogService.updateById(blog)) {
+            return R.error("更新失败");
+        }
         return R.success("更新成功");
     }
 
     //TODO 删除推文测试
+
     /**
      * 实现删除推文，需求参数：id
      *
@@ -218,21 +224,23 @@ public class BlogController {
     }
 
     //TODO 写了上锁和解锁接口，但是没有在其他方法中对上锁做出判断，后续实现
+
     /**
      * 修改推文可见性，需求参数：推文id和是否上锁isLocked，1为上锁，0为没有上锁
+     *
      * @param map
      * @param session
      * @return
      */
     @PostMapping("/updatebloglock")
-    public R<String> updateBlogLock(@RequestBody Map map, HttpSession session){
+    public R<String> updateBlogLock(@RequestBody Map map, HttpSession session) {
         log.info(map.toString());
 
         int isLocked = Integer.parseInt(map.get("isLocked").toString());
         int id = Integer.parseInt(map.get("id").toString());
 
         Blog blog = blogService.getById(id);
-        if(isLocked!=0 && isLocked!=1){
+        if (isLocked != 0 && isLocked != 1) {
             return R.error("传入参数错误，修改可见性失败");
         }
         blog.setIsLocked(isLocked);

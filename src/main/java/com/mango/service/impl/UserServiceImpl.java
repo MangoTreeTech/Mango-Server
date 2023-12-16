@@ -1,6 +1,5 @@
 package com.mango.service.impl;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -17,12 +16,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private UserService userService;
 
     @Override
-    public void uploadHeadById(String fileName, Integer id) {
+    public boolean uploadHeadById(String fileName, Integer id) {
 
         // 存储文件名到用户的icon属性中
         UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("id",id).set("icon", fileName);
-        userService.update(null, updateWrapper);
+        updateWrapper.eq("id", id).set("icon", fileName);
+        return userService.update(null, updateWrapper);
     }
 
     @Override
@@ -54,17 +53,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public void uploadLocationById(Integer id, double posX, double posY) {
+    public boolean uploadLocationById(Integer id, double posX, double posY) {
         UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("id",id).set("pos_x", posX).set("pos_y", posY);
-        userService.update(null, updateWrapper);
+        updateWrapper.eq("id", id).set("pos_x", posX).set("pos_y", posY);
+        return userService.update(null, updateWrapper);
     }
 
     @Override
-    public void changeVisibilityById(Integer id, Integer isVisible) {
+    public boolean changeVisibilityById(Integer id, Integer isVisible) {
         UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("id",id).set("is_visible", isVisible);
-        userService.update(null, updateWrapper);
+        updateWrapper.eq("id", id).set("is_visible", isVisible);
+        return userService.update(null, updateWrapper);
     }
 
 

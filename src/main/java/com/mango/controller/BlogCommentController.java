@@ -32,6 +32,7 @@ public class BlogCommentController {
 
     /**
      * 实现发布评论功能，需求参数：userId，blogId，isChild，parentId，comment
+     *
      * @param map
      * @param session
      * @return
@@ -40,7 +41,7 @@ public class BlogCommentController {
     public R<String> makeComment(@RequestBody Map map, HttpSession session) {
         log.info(map.toString());
 
-        BlogComment blogComment= new BlogComment();
+        BlogComment blogComment = new BlogComment();
         //获取各种数据
         int userId = Integer.parseInt(map.get("userId").toString());
         int blogId = Integer.parseInt(map.get("blogId").toString());
@@ -67,31 +68,37 @@ public class BlogCommentController {
 
     /**
      * 实现删除评论功能，需求参数：id
+     *
      * @param map
      * @param session
      * @return
      */
     @PostMapping("/deletecomment")
-    public R<String> deleteComment(@RequestBody Map map, HttpSession session){
+    public R<String> deleteComment(@RequestBody Map map, HttpSession session) {
         log.info(map.toString());
 
         int id = Integer.parseInt(map.get("id").toString());
         blogCommentService.removeById(id);
-        likeTableService.removeByLikeId(id ,0);
+        likeTableService.removeByLikeId(id, 0);
         return R.success("删除成功");
     }
 
     /**
      * 实现展示评论功能，需求参数：BlogId
+     *
      * @param map
      * @param session
      * @return
      */
     @PostMapping("/showcomment")
-    public R<List> showComment(@RequestBody Map map, HttpSession session){
+    public R<List> showComment(@RequestBody Map map, HttpSession session) {
         log.info(map.toString());
 
         int blogId = Integer.parseInt(map.get("blogId").toString());
-        return R.success(blogCommentService.selectBlogCommentByBlogId(blogId));
+        List<BlogComment> list = blogCommentService.selectBlogCommentByBlogId(blogId);
+        if (list.isEmpty()) {
+            return R.error("暂无评论");
+        }
+        return R.success(list);
     }
 }

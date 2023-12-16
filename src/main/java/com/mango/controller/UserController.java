@@ -90,6 +90,7 @@ public class UserController {
 
     /**
      * 实现登录功能，需求参数：用户id和用户密码password
+     *
      * @param map
      * @param session
      * @return
@@ -114,6 +115,7 @@ public class UserController {
 
     /**
      * 实现用户头像上传/更换功能，接收用户id和图片文件file
+     *
      * @param file
      * @param id
      * @return
@@ -140,7 +142,9 @@ public class UserController {
         Files.write(path, file.getBytes());
 
         // 存储文件名到用户的icon属性中
-        userService.uploadHeadById(fileName, id);
+        if (!userService.uploadHeadById(fileName, id)) {
+            return R.error("头像上传成功失败");
+        }
 
         return R.success("头像上传成功");
     }
@@ -158,6 +162,7 @@ public class UserController {
 
     /**
      * 上传自己位置，需求参数：用户id，用户位置posX，posY
+     *
      * @param map
      * @param session
      * @return
@@ -172,13 +177,16 @@ public class UserController {
         int posX = Integer.parseInt(map.get("posX").toString());
         int posY = Integer.parseInt(map.get("posY").toString());
 
-        userService.uploadLocationById(id, posX, posY);
+        if (!userService.uploadLocationById(id, posX, posY)) {
+            return R.error("更新位置失败");
+        }
 
-        return R.success("成功更新位置");
+        return R.success("更新位置成功");
     }
 
     /**
      * 实现修改可见性功能，需求参数：用户id和修改后的可见性（0不可见，1可见）
+     *
      * @param map
      * @param session
      * @return
@@ -192,13 +200,15 @@ public class UserController {
         //获取用户可见性
         int isVisible = Integer.parseInt(map.get("isVisible").toString());
 
-
-        userService.changeVisibilityById(id, isVisible);
+        if (!userService.changeVisibilityById(id, isVisible)) {
+            return R.error("修改可见性失败");
+        }
         return R.success("修改可见性成功");
     }
 
     /**
      * 实现查找某位用户的位置，会返回这个用户除了密码外的所有东西，需求参数：被查找的用户的id
+     *
      * @param id
      * @return
      */
@@ -207,7 +217,10 @@ public class UserController {
         log.info(String.valueOf(id));
 
         User user = userService.getById(id);
-        if(user.getIsVisible()==0){
+        if (user == null) {
+            return R.error("该用户不存在");
+        }
+        if (user.getIsVisible() == 0) {
             return R.error("该用户不可见");
         }
         user.setPassword("0");
@@ -233,7 +246,7 @@ public class UserController {
         int id = Integer.parseInt(map.get("id").toString());
         //获取用户点赞的推文
         List<LikeTable> list = likeTableService.selectLikeCommentsByUserId(id);
-        List<List> likeBlogContentList =new ArrayList<>();
+        List<List> likeBlogContentList = new ArrayList<>();
         for (LikeTable likeTable : list) {
             List<String> DescriptionAndFileNameList = new ArrayList<>();
             //得到一个推文，一个推文可能有多个图片，在这里把一个推文的多个图片拆开来，分别存入列表

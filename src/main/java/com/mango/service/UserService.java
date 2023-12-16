@@ -11,7 +11,7 @@ public interface UserService extends IService<User> {
      * @param fileName
      * @param id
      */
-    void uploadHeadById(String fileName, Integer id);
+    boolean uploadHeadById(String fileName, Integer id);
 
     /**
      * 判断用户id是否具有唯一性
@@ -34,11 +34,12 @@ public interface UserService extends IService<User> {
 
     /**
      * 更新用户位置属性
+     *
      * @param id
      * @param posX
      * @param posY
      */
-    void uploadLocationById(Integer id, double posX, double posY);
+    boolean uploadLocationById(Integer id, double posX, double posY);
 
-    void changeVisibilityById(Integer id, Integer isVisible);
+    boolean changeVisibilityById(Integer id, Integer isVisible);
 }

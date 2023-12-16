@@ -14,6 +14,7 @@ import java.util.List;
 public class LikeTableServiceImpl extends ServiceImpl<LikeTableMapper, LikeTable> implements LikeTableService {
     @Autowired
     private LikeTableService likeTableService;
+
     @Override
     public boolean existLike(Integer userId, Integer likeId, Integer isBlog) {
         QueryWrapper<LikeTable> queryWrapper = new QueryWrapper<>();

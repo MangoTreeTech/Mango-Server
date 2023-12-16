@@ -13,8 +13,9 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
+import java.util.Base64;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/friend")
@@ -41,7 +42,10 @@ public class FriendController {
         int userId = Integer.parseInt(map.get("userId").toString());
         //获取friendId
         int friendId = Integer.parseInt(map.get("friendId").toString());
-
+        /*
+        是否需要对两个id做查询判断，判断两个id是否存在，如果不存在。。。。
+        或者直接相信前端，不会乱传数据，这样减少查询次数，效率更高，目前没有判断，舍弃安全性，提升效率
+         */
         Friend friend = new Friend();
         friend.setUserId(userId);
         friend.setFriendId(friendId);
@@ -76,6 +80,7 @@ public class FriendController {
 
     /**
      * 实现查询好友列表功能，需求参数：用户userId
+     *
      * @param userId
      * @return
      * @throws IOException
@@ -85,7 +90,9 @@ public class FriendController {
         log.info(String.valueOf(userId));
 
         List<User> list = friendService.selectFriends(userId);
-        //List<byte[]> fileContents = new ArrayList<>();
+        if (list.isEmpty()) {
+            return R.error("暂无好友");
+        }
         for (User user : list) {
             String filePath = constant.dir + "/" + user.getIcon(); // 获取文件路径
             // 处理文件读取异常，比如记录日志或者跳过该文件的处理
@@ -102,6 +109,7 @@ public class FriendController {
 
     /**
      * 同样实现关注功能，但是是不一样的写法，后续讨论选择一种
+     *
      * @param friend
      * @return
      */

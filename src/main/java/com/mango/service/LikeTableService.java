@@ -6,9 +6,9 @@ import com.mango.entity.LikeTable;
 import java.util.List;
 
 public interface LikeTableService extends IService<LikeTable> {
-    boolean existLike(Integer userId,Integer likeId, Integer isBlog);
+    boolean existLike(Integer userId, Integer likeId, Integer isBlog);
 
-    void cancelLike(Integer userId,Integer likeId, Integer isBlog);
+    void cancelLike(Integer userId, Integer likeId, Integer isBlog);
 
     List<LikeTable> selectLikeByUserId(Integer userId);
 

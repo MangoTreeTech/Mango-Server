@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mango.entity.Friend;
 import com.mango.entity.User;
 import com.mango.mapper.FriendMapper;
-import com.mango.mapper.UserMapper;
 import com.mango.service.FriendService;
 import com.mango.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +21,7 @@ public class FriendServiceImpl extends ServiceImpl<FriendMapper, Friend> impleme
 
     @Autowired
     private UserService userService;
+
     @Override
     public boolean existFollow(Integer userId, Integer friendId) {
         QueryWrapper<Friend> queryWrapper = new QueryWrapper<>();
