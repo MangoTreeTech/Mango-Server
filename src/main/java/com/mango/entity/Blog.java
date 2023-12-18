@@ -38,4 +38,12 @@ public class Blog implements Serializable {
     //评论数量
     private Integer commentAmount;
 
+    //文本标签
+    private String  textLabels;
+
+    //图像标签
+    private String  imageLabels;
+
+    //是否通过审核。0为待审核，1为通过审核，2为审核不通过
+    private Integer passStatus;
 }

@@ -79,6 +79,7 @@ public class BlogController {
         LocalDateTime dateTime = LocalDateTime.now();
         blog.setCreateTime(dateTime);
         blog.setUpdateTime(dateTime);
+        blog.setPassStatus(0);
         blogService.save(blog);
 
         return R.success("发布成功");

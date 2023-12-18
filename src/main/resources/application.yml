@@ -28,4 +28,7 @@ mybatis-plus:
     db-config:
       id-type: auto
 
+dynamic:
+  cron:
+    expression=${DynamicScheduler.getCronExpression()}
 
