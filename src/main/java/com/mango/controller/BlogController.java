@@ -45,12 +45,16 @@ public class BlogController {
     @PostMapping("/createblog")
     public R<String> createBlog(@RequestParam("files") MultipartFile[] files,
                                 @RequestParam("userId") Integer userId,
+                                @RequestParam("posX") double posX,
+                                @RequestParam("posY") double posY,
                                 @RequestParam("description") String description) throws IOException {
         log.info(Arrays.toString(files), userId, description);
 
         Blog blog = new Blog();
         blog.setUserId(userId);
         blog.setDescription(description);
+        blog.setPosX(posX);
+        blog.setPosY(posY);
         blog.setIsLocked(0);
         blog.setLikeAmount(0);
         blog.setCommentAmount(0);
@@ -183,8 +187,8 @@ public class BlogController {
             newFileNames.add(fileName);
         }
         blog.setImage(newFileNames.toString());
-
         blog.setDescription(description);
+        blog.setPassStatus(0);
         //获取时间并存入
         LocalDateTime dateTime = LocalDateTime.now();
         blog.setUpdateTime(dateTime);

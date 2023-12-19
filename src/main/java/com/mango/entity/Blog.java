@@ -46,4 +46,9 @@ public class Blog implements Serializable {
 
     //是否通过审核。0为待审核，1为通过审核，2为审核不通过
     private Integer passStatus;
+    //推文位置
+    //经度
+    private double posX;
+    //纬度
+    private double posY;
 }

@@ -140,6 +140,7 @@ public class UserController {
         // 保存文件到指定路径
         Path path = Paths.get(constant.dir + "/" + fileName);
         Files.write(path, file.getBytes());
+        //TODO 审核用户头像
 
         // 存储文件名到用户的icon属性中
         if (!userService.uploadHeadById(fileName, id)) {
