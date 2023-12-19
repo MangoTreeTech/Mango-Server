@@ -11,4 +11,6 @@ public interface BlogService extends IService<Blog> {
     void addBlogLikeAmount(Integer id);
 
     boolean subBlogLikeAmount(Integer id);
+
+    List<Blog> selectBlogsUnPassed();
 }

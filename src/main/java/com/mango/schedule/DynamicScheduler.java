@@ -1,10 +1,19 @@
 package com.mango.schedule;
 import com.mango.config.Constant;
+import com.mango.entity.Blog;
 import com.mango.service.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -23,9 +32,39 @@ public class DynamicScheduler {
      * 定时审核进程，功能为扫描数据库中未审核的推文，对其打上标签并进行审核
      */
     @Scheduled(fixedRate = 1000)
-    public void performTask(){
+    public void performTask() throws IOException {
         // 这里放置任务逻辑
         System.out.println("开始审核");
+        //获取未审核的队列
+        List<Blog> blogList = blogService.selectBlogsUnPassed();
+        for (Blog blog: blogList) {
+            //python程序测试
+            String urlString = "http://localhost:8989/endpoint"; // 替换为你的服务器IP和端点，即接口位置
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setDoOutput(true);
+
+            // 发送数据
+            DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+            wr.writeBytes(blog.getDescription());
+            wr.flush();
+            wr.close();
+
+            // 获取响应
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String inputLine;
+            StringBuilder response = new StringBuilder();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+            // 输出响应结果
+            System.out.println("Response: " + response.toString());
+        }
+
     }
 
     // 动态调整任务频率的方法

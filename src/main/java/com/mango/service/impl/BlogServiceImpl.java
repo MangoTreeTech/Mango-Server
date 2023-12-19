@@ -41,4 +41,12 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
         blogService.update(null, updateWrapper);
         return false;
     }
+
+    @Override
+    public List<Blog> selectBlogsUnPassed(){
+        QueryWrapper<Blog> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("pass_status", 0);
+
+        return blogService.list(queryWrapper);
+    }
 }
