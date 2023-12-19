@@ -2,6 +2,7 @@ package com.mango.schedule;
 import com.mango.config.Constant;
 import com.mango.entity.Blog;
 import com.mango.service.BlogService;
+import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;
@@ -37,12 +38,15 @@ public class DynamicScheduler implements ApplicationContextAware {
     @Autowired
     private TencentImageModerationService tencentImageModerationService;
 
+    @Autowired
+    private DetectImageLabelsService detectImageLabelsService;
+
     /**
      *
      * 定时审核进程，功能为扫描数据库中未审核的推文，对其打上标签并进行审核
      */
     @Scheduled(fixedRate = 2000)//上个任务结束后一秒再开始
-    public void performTask() throws IOException {
+    public void performTask() throws IOException, TencentCloudSDKException {
         // 这里放置任务逻辑
         System.out.println("开始审核");
         //获取未审核的队列
@@ -65,7 +69,7 @@ public class DynamicScheduler implements ApplicationContextAware {
             if(imageResult.equals("0")){
                 System.out.println("图片审核正常");
                 blog.setPassStatus(1);//是否通过审核。0为待审核，1为通过审核，2为审核不通过
-                blogService.updateById(blog);
+                //blogService.updateById(blog);
             }
             else{
                 System.out.println("图片审核不正常");
@@ -73,6 +77,9 @@ public class DynamicScheduler implements ApplicationContextAware {
                 blogService.updateById(blog);
                 continue;
             }
+            //图片特征提取
+            blog.setImageLabels(detectImageLabelsService.detectImageLabels(blog.getImage()));
+            blogService.updateById(blog);
             /*//python程序测试
             String urlString = "http://localhost:8989/endpoint"; // 替换为你的服务器IP和端点，即接口位置
             URL url = new URL(urlString);
