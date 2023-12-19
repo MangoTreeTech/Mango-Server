@@ -1,6 +1,7 @@
 package com.mango.config;
 
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -11,5 +12,13 @@ import org.springframework.context.annotation.Configuration;
 @Data
 @ConfigurationProperties(prefix = "constant")
 public class Constant {
+    //图片存储默认位置
     public String dir = "./image";
+
+    //腾讯云密钥
+    public String secretId = "AKIDHUaWyIdprjN1qeImCSaggu0vcEiDrOsJ";
+
+    public String secretKey = "b19sRQI5khhaN2nbUUWcdP0Xt2Vnuxyr";
+
+    public String bucketName = "textdemo-1323245674";
 }

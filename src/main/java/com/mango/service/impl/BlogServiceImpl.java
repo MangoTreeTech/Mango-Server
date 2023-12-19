@@ -19,7 +19,7 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements Bl
     @Override
     public List<Blog> selectBlogs(Integer userId) {
         QueryWrapper<Blog> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_id", userId);
+        queryWrapper.eq("user_id", userId).eq("pass_status", 1);
 
         //List<Blog> blogList = blogService.list(queryWrapper);
         return blogService.list(queryWrapper);
