@@ -11,6 +11,7 @@ import com.mango.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -55,6 +56,9 @@ public class UserController {
         String name = map.get("name").toString();
         //获取用户密码
         String password = map.get("password").toString();
+
+        //对前端传过来的明文密码进行md5加密处理
+        //password = DigestUtils.md5DigestAsHex(password.getBytes());
 
         User user = new User();
         //生成唯一性id

@@ -134,6 +134,12 @@
             <version>3.14.9</version> <!-- 替换为你需要的版本号 -->
         </dependency>
 
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.15</version> <!-- 版本号可能需要根据实际情况调整 -->
+        </dependency>
+
     </dependencies>
 
     <build>
