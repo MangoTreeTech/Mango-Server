@@ -1,5 +1,7 @@
 package com.mango.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mango.common.R;
 import com.mango.config.Constant;
 import com.mango.entity.Blog;
@@ -13,12 +15,18 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpHeaders;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -57,7 +65,7 @@ public class UserController {
         //获取用户密码
         String password = map.get("password").toString();
 
-        //对前端传过来的明文密码进行md5加密处理
+        //TODO 对前端传过来的明文密码进行md5加密处理
         //password = DigestUtils.md5DigestAsHex(password.getBytes());
 
         User user = new User();
@@ -242,7 +250,7 @@ public class UserController {
     }
 
 
-    //TODO 大数据推送功能
+    //TODO 大数据推送功能，训练部分
     @PostMapping("/pytest")
     public R pyTest(@RequestBody Map map, HttpSession session) throws IOException, InterruptedException {
         log.info(map.toString());
@@ -305,5 +313,82 @@ public class UserController {
         return R.success("Python脚本执行完毕，退出码：" + exitCode);
 
 
+    }
+    //TODO 推送模块-获取推送队列功能实现
+    @PostMapping("/pytestgetblogs")
+    public R<? extends List> pyTestGetBlogs(@RequestBody Map map, HttpSession session) throws IOException, InterruptedException {
+        // Python 服务的 URL
+        String pythonServiceUrl = "http://localhost:your_python_port/your_endpoint";
+
+        // 创建 HttpClient 对象
+        HttpClient httpClient = HttpClient.newHttpClient();
+
+        // 创建 HttpRequest 对象
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .uri(URI.create(pythonServiceUrl))
+                .build();
+
+        // 发送 HTTP GET 请求
+        HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+
+        // 获取响应状态码
+        int statusCode = httpResponse.statusCode();
+        System.out.println("HTTP 状态码：" + statusCode);
+
+        // 获取响应头
+        HttpHeaders headers = httpResponse.headers();
+        headers.map().forEach((k, v) -> System.out.println(k + ":" + v));
+
+        // 获取响应体（即返回的数据）
+        String responseBody = httpResponse.body();
+        System.out.println("返回的数据：" + responseBody);
+
+        // response包含需要推送给用户的blogid队列
+        List<Blog> blogList = new ArrayList<>();
+
+        // 创建 ObjectMapper 对象
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        // 将 JSON 字符串解析为 JsonNode 对象
+        JsonNode jsonArray = objectMapper.readTree(responseBody);
+
+        // 从 JsonNode 中获取值
+        //String key1Value = jsonNode.get("data").asText();
+
+        for (JsonNode innerArray : jsonArray) {
+            // 提取数组中的数据
+            String blogId = innerArray.get(0).asText();
+            //String imagePath1 = innerArray.get(1).asText();
+            //String imagePath2 = innerArray.get(2).asText();
+
+            // 打印提取的数据
+            System.out.println("Title: " + blogId);
+            //System.out.println("Image Path 1: " + imagePath1);
+            //System.out.println("Image Path 2: " + imagePath2);
+            //得到id后将对应推文数据添加到blogList中
+            blogList.add(blogService.getById(blogId));
+        }
+        if (blogList.isEmpty()) {
+            return R.error("暂无推文");
+        }
+        //替换其中的image
+        for (Blog blog : blogList) {
+            // 去除字符串两端的方括号并按照逗号和空格分割成字符串数组
+            String[] fileNames = blog.getImage().replaceAll("[\\[\\]]", "").split("\\s*,\\s*");
+            //存储读取得到的，编码后的字符串
+            List<String> fileContents = new ArrayList<>();
+            for (String fileName : fileNames) {
+                String filePath = constant.dir + "/" + fileName; // 获取文件路径
+                // 处理文件读取异常，比如记录日志或者跳过该文件的处理
+                // 读取文件内容并添加到列表中
+                byte[] fileContent = Files.readAllBytes(Path.of(filePath));
+                // 使用Base64编码转换为字符串
+                String encodedString = Base64.getEncoder().encodeToString(fileContent);
+
+                fileContents.add(encodedString);
+            }
+            blog.setImage(fileContents.toString());
+        }
+        return R.success(blogList);
     }
 }
