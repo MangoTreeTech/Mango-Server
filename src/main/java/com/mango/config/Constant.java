@@ -21,4 +21,7 @@ public class Constant {
     public String secretKey = "b19sRQI5khhaN2nbUUWcdP0Xt2Vnuxyr";
 
     public String bucketName = "textdemo-1323245674";
+
+    //mango最新版本
+    public String LATEST_VERSION = "1.0.0";
 }

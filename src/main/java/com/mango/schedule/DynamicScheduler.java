@@ -48,7 +48,8 @@ public class DynamicScheduler implements ApplicationContextAware {
      *
      * 定时审核进程，功能为扫描数据库中未审核的推文，对其打上标签并进行审核
      */
-    @Scheduled(fixedRate = 2000)//上个任务结束后一秒再开始
+    //TODO 便于调试，暂时关闭此模块
+    @Scheduled(fixedRate = 200000)//上个任务结束后一秒再开始
     public void performTask() throws IOException, TencentCloudSDKException {
         // 这里放置任务逻辑
         System.out.println("开始审核");
